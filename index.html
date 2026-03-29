@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materials — E&S Dept.</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0e0e0e;
+    --surface:  #161616;
+    --border:   #2a2a2a;
+    --accent:   #d4ff00;
+    --muted:    #555;
+    --text:     #e8e8e8;
+    --text-dim: #888;
+    --mono:     'Share Tech Mono', monospace;
+    --sans:     'Barlow Condensed', sans-serif;
+    --red:      #ff3c3c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.4;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 22px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .page-title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .last-updated {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  /* ── MAIN AREA ── */
+  main { padding: 32px 40px 60px; }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-heading:first-of-type { margin-top: 0; }
+
+  /* ── TABLE ── */
+  .mat-table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--accent);
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 14px 10px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  tbody tr:hover { background: var(--surface); }
+
+  td {
+    padding: 11px 14px;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+
+  td.material-name {
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  td.notes-cell {
+    color: var(--text-dim);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* ── STOCK BADGE ── */
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border: 1px solid;
+  }
+
+  .badge-yes  { color: var(--accent); border-color: var(--accent); }
+  .badge-no   { color: var(--red);    border-color: var(--red); }
+
+  /* ── STATE MESSAGES ── */
+  .state-msg {
+    padding: 60px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .state-msg .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 18px 40px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    header, main, .filter-bar, footer { padding-left: 20px; padding-right: 20px; }
+    th, td { padding-left: 8px; padding-right: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">E&amp;S Dept. / Zhivaya Glina<br>Stock Reference</div>
+    <div class="page-title">Materials</div>
+  </div>
+  <div class="last-updated" id="last-updated">—</div>
+</header>
+
+<div class="filter-bar">
+  <span class="filter-label">FILTER //</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="FDM filament">FDM Filament</button>
+  <button class="filter-btn" data-filter="Laser">Laser Materials</button>
+  <button class="filter-btn" data-filter="in-stock">In Stock Only</button>
+</div>
+
+<main id="main-content">
+  <div class="state-msg" id="loading-msg">
+    <span class="spinner"></span> LOADING MATERIALS...
+  </div>
+</main>
+
+<footer>
+  <span>E&amp;S Dept. — Fabrication &amp; Solutions</span>
+  <span>Data synced live from Google Sheets</span>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+//  !! PASTE YOUR GOOGLE SHEET CSV URL HERE !!
+// ─────────────────────────────────────────────
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzBnaYFnkcmMlcPV8HYOqRaVm0_yUsd4RsWgzfwuXwhh1KNgXTPETD7XnmDJZ4vD0fWQHEZXOtSdVI/pubhtml';
+// Example:
+// const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/XXXX/pub?gid=0&single=true&output=csv';
+
+// ─────────────────────────────────────────────
+//  Expected sheet columns (case-insensitive):
+//  Category | Material | Colors | Size | In Stock | Notes
+// ─────────────────────────────────────────────
+
+let allRows = [];
+let activeFilter = 'all';
+
+// Simple CSV parser (handles quoted fields)
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = splitCSVLine(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = (vals[idx] || '').trim(); });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function splitCSVLine(line) {
+  const result = [];
+  let cur = '', inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQuote = !inQuote; continue; }
+    if (c === ',' && !inQuote) { result.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+function normalize(row) {
+  // Try to find columns regardless of exact name
+  const get = (...keys) => {
+    for (const k of keys) {
+      const found = Object.keys(row).find(rk => rk.includes(k));
+      if (found && row[found]) return row[found];
+    }
+    return '';
+  };
+  return {
+    category: get('category', 'cat', 'type'),
+    material: get('material', 'name', 'item'),
+    colors:   get('color', 'colours'),
+    size:     get('size', 'thick', 'dimension', 'format'),
+    inStock:  get('stock', 'available', 'in stock'),
+    notes:    get('note', 'comment', 'remark'),
+  };
+}
+
+function stockBadge(val) {
+  const v = val.toLowerCase();
+  const yes = v === 'yes' || v === 'да' || v === '1' || v === 'true' || v === '+';
+  return yes
+    ? '<span class="badge badge-yes">IN STOCK</span>'
+    : '<span class="badge badge-no">OUT</span>';
+}
+
+function groupBy(arr, key) {
+  return arr.reduce((acc, row) => {
+    const k = row[key] || 'Other';
+    (acc[k] = acc[k] || []).push(row);
+    return acc;
+  }, {});
+}
+
+function buildTable(rows) {
+  if (!rows.length) return '<p class="state-msg">No materials match this filter.</p>';
+
+  const groups = groupBy(rows, 'category');
+  let html = '';
+
+  for (const [cat, items] of Object.entries(groups)) {
+    html += `<div class="section-heading">${cat}</div>`;
+    html += `<div class="mat-table-wrap"><table>
+      <thead><tr>
+        <th>Material</th>
+        <th>Colors / Options</th>
+        <th>Size / Thickness</th>
+        <th>Stock</th>
+        <th>Notes</th>
+      </tr></thead><tbody>`;
+
+    for (const item of items) {
+      html += `<tr>
+        <td class="material-name">${item.material || '—'}</td>
+        <td>${item.colors || '—'}</td>
+        <td>${item.size || '—'}</td>
+        <td>${stockBadge(item.inStock)}</td>
+        <td class="notes-cell">${item.notes || ''}</td>
+      </tr>`;
+    }
+
+    html += '</tbody></table></div>';
+  }
+  return html;
+}
+
+function applyFilter() {
+  let rows = allRows.map(normalize);
+
+  if (activeFilter === 'in-stock') {
+    rows = rows.filter(r => {
+      const v = r.inStock.toLowerCase();
+      return v === 'yes' || v === 'да' || v === '1' || v === 'true' || v === '+';
+    });
+  } else if (activeFilter !== 'all') {
+    rows = rows.filter(r => r.category.toLowerCase().includes(activeFilter.toLowerCase()));
+  }
+
+  document.getElementById('main-content').innerHTML = buildTable(rows);
+}
+
+async function loadData() {
+  const main = document.getElementById('main-content');
+
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+    main.innerHTML = `<div class="state-msg">⚠ Paste your Google Sheet CSV URL into the SHEET_CSV_URL variable at the top of the script.</div>`;
+    return;
+  }
+
+  try {
+    // Use a CORS proxy since Google Sheets doesn't allow direct fetch from GitHub Pages
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV_URL);
+    const res = await fetch(proxyUrl);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const text = await res.text();
+    allRows = parseCSV(text);
+
+    const now = new Date();
+    document.getElementById('last-updated').innerHTML =
+      `SYNCED<br>${now.toLocaleDateString('ru-RU')} ${now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})}`;
+
+    applyFilter();
+  } catch (err) {
+    main.innerHTML = `<div class="state-msg">⚠ Could not load sheet data.<br><br>${err.message}</div>`;
+  }
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    applyFilter();
+  });
+});
+
+// Load on start
+loadData();
+</script>
+</body>
+</html>
