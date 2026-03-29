@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Materials — E&S Dept.</title>
+<title>Материалы — E&S Dept.</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,6 +17,7 @@
     --mono:     'Share Tech Mono', monospace;
     --sans:     'Barlow Condensed', sans-serif;
     --red:      #ff3c3c;
+    --orange:   #ff8c00;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +31,6 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
   header {
     border-bottom: 1px solid var(--border);
     padding: 28px 40px 22px;
@@ -66,7 +66,6 @@
     line-height: 1.8;
   }
 
-  /* ── FILTER BAR ── */
   .filter-bar {
     padding: 16px 40px;
     border-bottom: 1px solid var(--border);
@@ -100,10 +99,8 @@
   .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
   .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
 
-  /* ── MAIN AREA ── */
   main { padding: 32px 40px 60px; }
 
-  /* ── SECTION HEADING ── */
   .section-heading {
     font-family: var(--mono);
     font-size: 10px;
@@ -124,7 +121,6 @@
   }
   .section-heading:first-of-type { margin-top: 0; }
 
-  /* ── TABLE ── */
   .mat-table-wrap { overflow-x: auto; }
 
   table {
@@ -133,9 +129,7 @@
     font-size: 15px;
   }
 
-  thead tr {
-    border-bottom: 1px solid var(--accent);
-  }
+  thead tr { border-bottom: 1px solid var(--accent); }
 
   th {
     font-family: var(--mono);
@@ -152,7 +146,6 @@
     border-bottom: 1px solid var(--border);
     transition: background 0.1s;
   }
-
   tbody tr:hover { background: var(--surface); }
 
   td {
@@ -168,13 +161,6 @@
     white-space: nowrap;
   }
 
-  td.notes-cell {
-    color: var(--text-dim);
-    font-size: 13px;
-    font-style: italic;
-  }
-
-  /* ── STOCK BADGE ── */
   .badge {
     display: inline-block;
     font-family: var(--mono);
@@ -184,11 +170,14 @@
     padding: 3px 9px;
     border: 1px solid;
   }
+  .badge-yes { color: var(--accent); border-color: var(--accent); }
+  .badge-no  { color: var(--red);    border-color: var(--red); }
 
-  .badge-yes  { color: var(--accent); border-color: var(--accent); }
-  .badge-no   { color: var(--red);    border-color: var(--red); }
+  .qty { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; }
+  .qty-много { color: var(--accent); }
+  .qty-мало  { color: var(--orange); }
+  .qty-нет   { color: var(--red); }
 
-  /* ── STATE MESSAGES ── */
   .state-msg {
     padding: 60px 0;
     text-align: center;
@@ -198,7 +187,7 @@
     letter-spacing: 0.1em;
   }
 
-  .state-msg .spinner {
+  .spinner {
     display: inline-block;
     width: 18px; height: 18px;
     border: 2px solid var(--border);
@@ -208,10 +197,8 @@
     vertical-align: middle;
     margin-right: 10px;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
     padding: 18px 40px;
@@ -234,51 +221,40 @@
 
 <header>
   <div>
-    <div class="logo">E&amp;S Dept. / Zhivaya Glina<br>Stock Reference</div>
-    <div class="page-title">Materials</div>
+    <div class="logo">E&amp;S Dept. / Zhivaya Glina<br>Справочник материалов</div>
+    <div class="page-title">Материалы</div>
   </div>
   <div class="last-updated" id="last-updated">—</div>
 </header>
 
 <div class="filter-bar">
-  <span class="filter-label">FILTER //</span>
-  <button class="filter-btn active" data-filter="all">All</button>
-  <button class="filter-btn" data-filter="FDM filament">FDM Filament</button>
-  <button class="filter-btn" data-filter="Laser">Laser Materials</button>
-  <button class="filter-btn" data-filter="in-stock">In Stock Only</button>
+  <span class="filter-label">ФИЛЬТР //</span>
+  <button class="filter-btn active" data-filter="all">Все</button>
+  <button class="filter-btn" data-filter="3D">3D Печать</button>
+  <button class="filter-btn" data-filter="Резка">Лазер</button>
+  <button class="filter-btn" data-filter="в наличии">Только в наличии</button>
 </div>
 
 <main id="main-content">
-  <div class="state-msg" id="loading-msg">
-    <span class="spinner"></span> LOADING MATERIALS...
+  <div class="state-msg">
+    <span class="spinner"></span> ЗАГРУЗКА МАТЕРИАЛОВ...
   </div>
 </main>
 
 <footer>
   <span>E&amp;S Dept. — Fabrication &amp; Solutions</span>
-  <span>Data synced live from Google Sheets</span>
+  <span>Данные синхронизируются с Google Sheets</span>
 </footer>
 
 <script>
-// ─────────────────────────────────────────────
-//  !! PASTE YOUR GOOGLE SHEET CSV URL HERE !!
-// ─────────────────────────────────────────────
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzBnaYFnkcmMlcPV8HYOqRaVm0_yUsd4RsWgzfwuXwhh1KNgXTPETD7XnmDJZ4vD0fWQHEZXOtSdVI/pubhtml';
-// Example:
-// const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/XXXX/pub?gid=0&single=true&output=csv';
-
-// ─────────────────────────────────────────────
-//  Expected sheet columns (case-insensitive):
-//  Category | Material | Colors | Size | In Stock | Notes
-// ─────────────────────────────────────────────
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzBnaYFnkcmMlcPV8HYOqRaVm0_yUsd4RsWgzfwuXwhh1KNgXTPETD7XnmDJZ4vD0fWQHEZXOtSdVI/pub?output=csv';
 
 let allRows = [];
 let activeFilter = 'all';
 
-// Simple CSV parser (handles quoted fields)
 function parseCSV(text) {
   const lines = text.trim().split('\n');
-  const headers = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+  const headers = splitCSVLine(lines[0]).map(h => h.trim());
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
@@ -304,67 +280,57 @@ function splitCSVLine(line) {
 }
 
 function normalize(row) {
-  // Try to find columns regardless of exact name
-  const get = (...keys) => {
-    for (const k of keys) {
-      const found = Object.keys(row).find(rk => rk.includes(k));
-      if (found && row[found]) return row[found];
-    }
-    return '';
-  };
   return {
-    category: get('category', 'cat', 'type'),
-    material: get('material', 'name', 'item'),
-    colors:   get('color', 'colours'),
-    size:     get('size', 'thick', 'dimension', 'format'),
-    inStock:  get('stock', 'available', 'in stock'),
-    notes:    get('note', 'comment', 'remark'),
+    category: row['Тип'] || '',
+    material: row['Материал'] || '',
+    color:    row['Цвет'] || '—',
+    size:     row['Размер'] || '—',
+    inStock:  row['Наличие'] || '',
+    qty:      row['Кол-во'] || '',
   };
 }
 
 function stockBadge(val) {
-  const v = val.toLowerCase();
-  const yes = v === 'yes' || v === 'да' || v === '1' || v === 'true' || v === '+';
-  return yes
-    ? '<span class="badge badge-yes">IN STOCK</span>'
-    : '<span class="badge badge-no">OUT</span>';
+  return val.toLowerCase().trim() === 'да'
+    ? '<span class="badge badge-yes">В НАЛИЧИИ</span>'
+    : '<span class="badge badge-no">НЕТ</span>';
+}
+
+function qtyLabel(val) {
+  const v = val.toLowerCase().trim();
+  if (v === 'много') return '<span class="qty qty-много">МНОГО</span>';
+  if (v === 'мало')  return '<span class="qty qty-мало">МАЛО</span>';
+  if (v === 'нет')   return '<span class="qty qty-нет">НЕТ</span>';
+  return `<span class="qty">${val}</span>`;
 }
 
 function groupBy(arr, key) {
   return arr.reduce((acc, row) => {
-    const k = row[key] || 'Other';
+    const k = row[key] || 'Прочее';
     (acc[k] = acc[k] || []).push(row);
     return acc;
   }, {});
 }
 
 function buildTable(rows) {
-  if (!rows.length) return '<p class="state-msg">No materials match this filter.</p>';
-
+  if (!rows.length) return '<p class="state-msg">Нет материалов по этому фильтру.</p>';
   const groups = groupBy(rows, 'category');
   let html = '';
-
   for (const [cat, items] of Object.entries(groups)) {
     html += `<div class="section-heading">${cat}</div>`;
     html += `<div class="mat-table-wrap"><table>
       <thead><tr>
-        <th>Material</th>
-        <th>Colors / Options</th>
-        <th>Size / Thickness</th>
-        <th>Stock</th>
-        <th>Notes</th>
+        <th>Материал</th><th>Цвет</th><th>Размер</th><th>Наличие</th><th>Количество</th>
       </tr></thead><tbody>`;
-
     for (const item of items) {
       html += `<tr>
         <td class="material-name">${item.material || '—'}</td>
-        <td>${item.colors || '—'}</td>
-        <td>${item.size || '—'}</td>
+        <td>${item.color}</td>
+        <td>${item.size}</td>
         <td>${stockBadge(item.inStock)}</td>
-        <td class="notes-cell">${item.notes || ''}</td>
+        <td>${qtyLabel(item.qty)}</td>
       </tr>`;
     }
-
     html += '</tbody></table></div>';
   }
   return html;
@@ -372,46 +338,31 @@ function buildTable(rows) {
 
 function applyFilter() {
   let rows = allRows.map(normalize);
-
-  if (activeFilter === 'in-stock') {
-    rows = rows.filter(r => {
-      const v = r.inStock.toLowerCase();
-      return v === 'yes' || v === 'да' || v === '1' || v === 'true' || v === '+';
-    });
+  if (activeFilter === 'в наличии') {
+    rows = rows.filter(r => r.inStock.toLowerCase().trim() === 'да');
   } else if (activeFilter !== 'all') {
     rows = rows.filter(r => r.category.toLowerCase().includes(activeFilter.toLowerCase()));
   }
-
   document.getElementById('main-content').innerHTML = buildTable(rows);
 }
 
 async function loadData() {
   const main = document.getElementById('main-content');
-
-  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
-    main.innerHTML = `<div class="state-msg">⚠ Paste your Google Sheet CSV URL into the SHEET_CSV_URL variable at the top of the script.</div>`;
-    return;
-  }
-
   try {
-    // Use a CORS proxy since Google Sheets doesn't allow direct fetch from GitHub Pages
     const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV_URL);
     const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error('Network response was not ok');
+    if (!res.ok) throw new Error('Сеть не отвечает');
     const text = await res.text();
     allRows = parseCSV(text);
-
     const now = new Date();
     document.getElementById('last-updated').innerHTML =
-      `SYNCED<br>${now.toLocaleDateString('ru-RU')} ${now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})}`;
-
+      `ОБНОВЛЕНО<br>${now.toLocaleDateString('ru-RU')} ${now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})}`;
     applyFilter();
   } catch (err) {
-    main.innerHTML = `<div class="state-msg">⚠ Could not load sheet data.<br><br>${err.message}</div>`;
+    main.innerHTML = `<div class="state-msg">⚠ Не удалось загрузить данные.<br><br>${err.message}</div>`;
   }
 }
 
-// Filter buttons
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -421,7 +372,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-// Load on start
 loadData();
 </script>
 </body>
